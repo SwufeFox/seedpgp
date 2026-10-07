@@ -5,7 +5,7 @@ import { build } from 'vite';
 import testConfig from '../vite.test.config.js';
 
 await build(testConfig);
-const { decryptKey, generateDeterministicKey, readPrivateKey } = await import('../.test-dist/keygen-test.js');
+const { decryptKey, decryptText, encryptText, generateDeterministicKey, readPrivateKey } = await import('../.test-dist/keygen-test.js');
 const fixture = {
   name: 'SeedPGP Reproducibility Test',
   email: 'fixture@example.invalid',
@@ -45,4 +45,14 @@ test('same recovery inputs reproduce exact armored keys and import with the same
   const encryptedSecretKey = await readPrivateKey({ armoredKey: first.privateKey });
   const unlockedSecretKey = await decryptKey({ privateKey: encryptedSecretKey, passphrase: fixture.password });
   assert.ok(unlockedSecretKey);
+
+  const plaintext = '测试文本：SeedPGP encrypts and decrypts locally. 🐈';
+  const ciphertext = await encryptText(plaintext, first.publicKey);
+  assert.match(ciphertext, /^-----BEGIN PGP MESSAGE-----/);
+  assert.equal(await decryptText(ciphertext, first.privateKey, fixture.password), plaintext);
+  assert.equal(await decryptText(ciphertext, differentMetadata.privateKey, fixture.password), plaintext);
+  await assert.rejects(
+    decryptText(ciphertext, first.privateKey, 'incorrect recovery passphrase for test'),
+    /无法解密/
+  );
 });

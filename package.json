@@ -1,7 +1,7 @@
 {
   "name": "seedpgp",
   "version": "1.0.0",
-  "description": "Deterministic, browser-only OpenPGP key generation and recovery from a memorable passphrase.",
+  "description": "Browser-only OpenPGP text encryption and decryption with a recoverable passphrase-based identity.",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
