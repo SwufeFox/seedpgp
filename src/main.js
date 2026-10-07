@@ -8,7 +8,7 @@ function setBusy(busy, message = '正在派生密钥…') {
   $('#progress').classList.toggle('hidden', !busy);
   $('#progress-text').textContent = message;
   $('#generate').disabled = busy;
-  $('#error').classList.add('hidden');
+  if (busy) $('#error').classList.add('hidden');
 }
 
 function showError(message) {
